@@ -1,59 +1,38 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.FacilityScore;
-import com.example.demo.entity.Property;
 import com.example.demo.entity.RatingResult;
-import com.example.demo.exception.BadRequestException;
-import com.example.demo.repository.*;
-import com.example.demo.service.RatingService;
+import com.example.demo.repository.FacilityScoreRepository;
+import com.example.demo.repository.RatingResultRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RatingServiceImpl implements RatingService {
+public class RatingServiceImpl {
 
-    private final PropertyRepository propertyRepository;
     private final FacilityScoreRepository scoreRepository;
     private final RatingResultRepository ratingRepository;
 
-    public RatingServiceImpl(PropertyRepository propertyRepository,
-                             FacilityScoreRepository scoreRepository,
+    public RatingServiceImpl(FacilityScoreRepository scoreRepository,
                              RatingResultRepository ratingRepository) {
-        this.propertyRepository = propertyRepository;
         this.scoreRepository = scoreRepository;
         this.ratingRepository = ratingRepository;
     }
 
-    @Override
-    public RatingResult generateRating(Long propertyId) {
-
-        Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new BadRequestException("Property not found"));
+    public RatingResult calculateRating(Long propertyId) {
 
         FacilityScore score = scoreRepository.findByPropertyId(propertyId)
-                .orElseThrow(() -> new BadRequestException("Facility score missing"));
+                .orElseThrow(() -> new RuntimeException("FacilityScore not found"));
 
-        double avg = (score.getSchoolProximity()
-                + score.getHospitalProximity()
-                + score.getTransportAccess()
-                + score.getSafetyScore()) / 4.0;
-
-        String category;
-        if (avg >= 8) category = "EXCELLENT";
-        else if (avg >= 6) category = "GOOD";
-        else if (avg >= 4) category = "AVERAGE";
-        else category = "POOR";
+        double finalRating =
+                score.getSchoolProximity() +
+                score.getHospitalProximity() +
+                score.getTransportAccess() +
+                score.getSafetyScore();
 
         RatingResult result = new RatingResult();
-        result.setProperty(property);
-        result.setFinalRating(avg);
-        result.setRatingCategory(category);
+        result.setFinalRating(finalRating);
+        result.setRatingCategory(finalRating > 15 ? "GOOD" : "AVERAGE");
 
         return ratingRepository.save(result);
-    }
-
-    @Override
-    public RatingResult getRating(Long propertyId) {
-        return ratingRepository.findByPropertyId(propertyId)
-                .orElseThrow(() -> new BadRequestException("Rating not found"));
     }
 }

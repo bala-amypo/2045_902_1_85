@@ -1,37 +1,20 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.FacilityScore;
-import com.example.demo.entity.Property;
-import com.example.demo.exception.BadRequestException;
 import com.example.demo.repository.FacilityScoreRepository;
-import com.example.demo.repository.PropertyRepository;
-import com.example.demo.service.FacilityScoreService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FacilityScoreServiceImpl implements FacilityScoreService {
+public class FacilityScoreServiceImpl {
 
     private final FacilityScoreRepository scoreRepository;
-    private final PropertyRepository propertyRepository;
 
-    public FacilityScoreServiceImpl(FacilityScoreRepository scoreRepository,
-                                    PropertyRepository propertyRepository) {
+    public FacilityScoreServiceImpl(FacilityScoreRepository scoreRepository) {
         this.scoreRepository = scoreRepository;
-        this.propertyRepository = propertyRepository;
     }
 
-    @Override
-    public FacilityScore addScore(Long propertyId, FacilityScore score) {
-        Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new BadRequestException("Property not found"));
-
-        score.setProperty(property);
-        return scoreRepository.save(score);
-    }
-
-    @Override
-    public FacilityScore getScoreByProperty(Long propertyId) {
+    public FacilityScore getByPropertyId(Long propertyId) {
         return scoreRepository.findByPropertyId(propertyId)
-                .orElseThrow(() -> new BadRequestException("Facility score not found"));
+                .orElseThrow(() -> new RuntimeException("FacilityScore not found"));
     }
 }
