@@ -1,37 +1,45 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import lombok.*;
-
-import java.util.List;
+import java.util.*;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "properties")
 public class Property {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String title;
-
-    @Column(nullable = false)
     private String address;
-
-    @Column(nullable = false)
     private String city;
-
-    @Min(1)
     private Double price;
+    private Double areaSqFt;
 
-    @Min(100)
-    private Double areaSqft;
+    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL)
+    private RatingResult ratingResult;
 
-    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RatingLog> ratingLogs;
+    @OneToMany(
+        mappedBy = "property",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<RatingLog> ratingLogs = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "assignedProperties")
+    private Set<User> assignedUsers = new HashSet<>();
+
+    public Property() {}
+
+    public Property(String title, String address, String city,
+                    Double price, Double areaSqFt) {
+        this.title = title;
+        this.address = address;
+        this.city = city;
+        this.price = price;
+        this.areaSqFt = areaSqFt;
+    }
+
+    // getters and setters
 }

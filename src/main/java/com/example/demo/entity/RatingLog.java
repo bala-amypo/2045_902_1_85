@@ -1,15 +1,10 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "rating_logs")
 public class RatingLog {
 
     @Id
@@ -17,16 +12,24 @@ public class RatingLog {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "property_id", nullable = false)
+    @JoinColumn(name = "property_id")
     private Property property;
 
-    @Column(nullable = false)
     private String message;
-
     private LocalDateTime loggedAt;
 
     @PrePersist
-    public void onCreate() {
-        this.loggedAt = LocalDateTime.now();
+    public void setLogTime() {
+        loggedAt = LocalDateTime.now();
     }
+
+    public RatingLog() {}
+
+    public RatingLog(Property property, String message, LocalDateTime loggedAt) {
+        this.property = property;
+        this.message = message;
+        this.loggedAt = loggedAt;
+    }
+
+    // getters and setters
 }
