@@ -5,6 +5,23 @@ import java.time.LocalDateTime;
 
 
 @Entity
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+public class RatingLog {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    private Property property;
+
+    private String rating;
+
+    private LocalDateTime createdAt;
+}
+
 public class RatingLog {
 
     @Id
@@ -15,6 +32,7 @@ public class RatingLog {
 
     @ManyToOne
     private Property property;
+    
 
     public Long getId() {
         return id;
@@ -40,6 +58,11 @@ public class RatingLog {
     this.property = property;
     this.rating = rating;
     this.createdAt = createdAt;
+
+    private String rating;
+
+    private LocalDateTime createdAt;
+
 }
 
 }
