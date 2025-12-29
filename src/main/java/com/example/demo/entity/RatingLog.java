@@ -3,10 +3,7 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 public class RatingLog {
 
     @Id
@@ -14,54 +11,55 @@ public class RatingLog {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "property_id")
     private Property property;
 
     private String rating;
 
     private LocalDateTime createdAt;
-}
 
-public class RatingLog {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String message;
-
-    @ManyToOne
-    private Property property;
-    
-
-    public Long getId() {
-        return id;
+    // ✅ No-args constructor (required by JPA)
+    public RatingLog() {
     }
 
-    public String getMessage() {
-        return message;
+    // ✅ All-args constructor
+    public RatingLog(Property property, String rating, LocalDateTime createdAt) {
+        this.property = property;
+        this.rating = rating;
+        this.createdAt = createdAt;
+    }
+
+    // ✅ Getters
+    public Long getId() {
+        return id;
     }
 
     public Property getProperty() {
         return property;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public String getRating() {
+        return rating;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    // ✅ Setters
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setProperty(Property property) {
         this.property = property;
     }
 
-    public RatingLog(Property property, String rating, LocalDateTime createdAt) {
-    this.property = property;
-    this.rating = rating;
-    this.createdAt = createdAt;
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
 
-    private String rating;
-
-    private LocalDateTime createdAt;
-
-}
-
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
