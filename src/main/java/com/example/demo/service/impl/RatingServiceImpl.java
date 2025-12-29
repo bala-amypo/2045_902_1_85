@@ -1,38 +1,32 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.FacilityScore;
-import com.example.demo.entity.RatingResult;
 import com.example.demo.repository.FacilityScoreRepository;
-import com.example.demo.repository.RatingResultRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class RatingServiceImpl {
 
-    private final FacilityScoreRepository scoreRepository;
-    private final RatingResultRepository ratingRepository;
+    private final FacilityScoreRepository facilityScoreRepository;
 
-    public RatingServiceImpl(FacilityScoreRepository scoreRepository,
-                             RatingResultRepository ratingRepository) {
-        this.scoreRepository = scoreRepository;
-        this.ratingRepository = ratingRepository;
+    public RatingServiceImpl(FacilityScoreRepository facilityScoreRepository) {
+        this.facilityScoreRepository = facilityScoreRepository;
     }
 
-    public RatingResult calculateRating(Long propertyId) {
+    public double calculateRating(Long propertyId) {
 
-        FacilityScore score = scoreRepository.findByPropertyId(propertyId)
-                .orElseThrow(() -> new RuntimeException("FacilityScore not found"));
+        List<FacilityScore> scores =
+                facilityScoreRepository.findByPropertyId(propertyId);
 
-        double finalRating =
-                score.getSchoolProximity() +
-                score.getHospitalProximity() +
-                score.getTransportAccess() +
-                score.getSafetyScore();
+        if (scores.isEmpty()) {
+            throw new RuntimeException("No facility scores found");
+        }
 
-        RatingResult result = new RatingResult();
-        result.setFinalRating(finalRating);
-        result.setRatingCategory(finalRating > 15 ? "GOOD" : "AVERAGE");
-
-        return ratingRepository.save(result);
+        return scores.stream()
+                .mapToInt(FacilityScore::getScore)
+                .average()
+                .orElse(0.0);
     }
 }

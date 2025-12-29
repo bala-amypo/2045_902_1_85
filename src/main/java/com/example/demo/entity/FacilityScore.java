@@ -9,39 +9,37 @@ public class FacilityScore {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double schoolProximity;
-    private double hospitalProximity;
-    private double transportAccess;
-    private double safetyScore;
+    private Long propertyId;
+    private String facilityName;
+    private int score;
 
-    @ManyToOne
-    private Property property;
+    public FacilityScore() {}
 
     public Long getId() {
         return id;
     }
 
-    public double getSchoolProximity() {
-        return schoolProximity;
+    public Long getPropertyId() {
+        return propertyId;
     }
 
-    public double getHospitalProximity() {
-        return hospitalProximity;
+    public void setPropertyId(Long propertyId) {
+        this.propertyId = propertyId;
     }
 
-    public double getTransportAccess() {
-        return transportAccess;
+    public String getFacilityName() {
+        return facilityName;
     }
 
-    public double getSafetyScore() {
-        return safetyScore;
+    public void setFacilityName(String facilityName) {
+        this.facilityName = facilityName;
     }
 
-    public Property getProperty() {
-        return property;
+    public int getScore() {
+        return score;
     }
 
-    public void setProperty(Property property) {
-        this.property = property;
+    public void setScore(int score) {
+        this.score = score;
     }
 }
