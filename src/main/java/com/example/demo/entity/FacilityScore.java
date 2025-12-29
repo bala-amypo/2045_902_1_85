@@ -10,36 +10,20 @@ public class FacilityScore {
     private Long id;
 
     private Long propertyId;
-    private String facilityName;
-    private int score;
+    private String facility;
+    private double score;
 
     public FacilityScore() {}
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getPropertyId() {
-        return propertyId;
-    }
+    public Long getPropertyId() { return propertyId; }
+    public void setPropertyId(Long propertyId) { this.propertyId = propertyId; }
 
-    public void setPropertyId(Long propertyId) {
-        this.propertyId = propertyId;
-    }
+    public String getFacility() { return facility; }
+    public void setFacility(String facility) { this.facility = facility; }
 
-    public String getFacilityName() {
-        return facilityName;
-    }
-
-    public void setFacilityName(String facilityName) {
-        this.facilityName = facilityName;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
+    public double getScore() { return score; }
+    public void setScore(double score) { this.score = score; }
 }

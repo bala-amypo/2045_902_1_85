@@ -4,8 +4,6 @@ import com.example.demo.entity.FacilityScore;
 import java.util.List;
 
 public interface FacilityScoreService {
-
-    FacilityScore addScore(Long propertyId, FacilityScore facilityScore);
-
+    FacilityScore addScore(Long propertyId, FacilityScore score);
     List<FacilityScore> getScoreByProperty(Long propertyId);
 }
