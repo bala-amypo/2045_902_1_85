@@ -1,12 +1,13 @@
-package com.example.demo.controller;
+package com.example.demo.Controller;
 
 import com.example.demo.entity.FacilityScore;
 import com.example.demo.service.FacilityScoreService;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/scores")
+@RequestMapping("/facility-score")
 public class FacilityScoreController {
 
     private final FacilityScoreService facilityScoreService;
@@ -16,13 +17,15 @@ public class FacilityScoreController {
     }
 
     @PostMapping("/{propertyId}")
-    public FacilityScore submitScore(@PathVariable Long propertyId,
-                                     @Valid @RequestBody FacilityScore score) {
-        return facilityScoreService.addScore(propertyId, score);
+    public FacilityScore addScore(
+            @PathVariable Long propertyId,
+            @RequestBody FacilityScore facilityScore) {
+
+        return facilityScoreService.addScore(propertyId, facilityScore);
     }
 
     @GetMapping("/{propertyId}")
-    public FacilityScore getScore(@PathVariable Long propertyId) {
+    public List<FacilityScore> getScores(@PathVariable Long propertyId) {
         return facilityScoreService.getScoreByProperty(propertyId);
     }
 }
