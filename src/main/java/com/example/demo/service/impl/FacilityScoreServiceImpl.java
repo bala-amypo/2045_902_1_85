@@ -2,7 +2,6 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.FacilityScore;
 import com.example.demo.entity.Property;
-import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.FacilityScoreRepository;
 import com.example.demo.repository.PropertyRepository;
@@ -23,24 +22,14 @@ public class FacilityScoreServiceImpl implements FacilityScoreService {
 
     @Override
     public FacilityScore addScore(Long propertyId, FacilityScore score) {
-
         Property property = propertyRepo.findById(propertyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Property not found"));
 
-        // one score per property rule
         repo.findByProperty(property).ifPresent(s -> {
-            throw new BadRequestException("Facility score already exists for property");
+            throw new IllegalArgumentException("Facility score already exists");
         });
 
-        // attach property
-        score = new FacilityScore(
-                property,
-                score.getSchoolProximity(),
-                score.getHospitalProximity(),
-                score.getTransportAccess(),
-                score.getSafetyScore()
-        );
-
+        score.setProperty(property);
         return repo.save(score);
     }
 
