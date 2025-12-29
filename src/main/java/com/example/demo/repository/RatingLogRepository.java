@@ -8,4 +8,6 @@ import java.util.List;
 public interface RatingLogRepository extends JpaRepository<RatingLog, Long> {
 
     List<RatingLog> findByPropertyId(Long propertyId);
+    List<RatingLog> findByProperty(Property property);
+
 }

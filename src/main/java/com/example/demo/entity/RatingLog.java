@@ -33,4 +33,11 @@ public class RatingLog {
     public void setProperty(Property property) {
         this.property = property;
     }
+
+    public RatingLog(Property property, String rating, LocalDateTime createdAt) {
+    this.property = property;
+    this.rating = rating;
+    this.createdAt = createdAt;
+}
+
 }
