@@ -3,27 +3,38 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "facility_scores")
 public class FacilityScore {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long propertyId;
-    private String facility;
-    private double score;
+    @OneToOne
+    private Property property;
+
+    private Integer schoolProximity;
+    private Integer hospitalProximity;
+    private Integer transportAccess;
+    private Integer safetyScore;
 
     public FacilityScore() {}
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public FacilityScore(Property property, Integer schoolProximity,
+                         Integer hospitalProximity, Integer transportAccess,
+                         Integer safetyScore) {
+        this.property = property;
+        this.schoolProximity = schoolProximity;
+        this.hospitalProximity = hospitalProximity;
+        this.transportAccess = transportAccess;
+        this.safetyScore = safetyScore;
+    }
 
-    public Long getPropertyId() { return propertyId; }
-    public void setPropertyId(Long propertyId) { this.propertyId = propertyId; }
+    // ✅ REQUIRED GETTERS
+    public Integer getSchoolProximity() { return schoolProximity; }
+    public Integer getHospitalProximity() { return hospitalProximity; }
+    public Integer getTransportAccess() { return transportAccess; }
+    public Integer getSafetyScore() { return safetyScore; }
 
-    public String getFacility() { return facility; }
-    public void setFacility(String facility) { this.facility = facility; }
-
-    public double getScore() { return score; }
-    public void setScore(double score) { this.score = score; }
+    public Property getProperty() { return property; }
 }
