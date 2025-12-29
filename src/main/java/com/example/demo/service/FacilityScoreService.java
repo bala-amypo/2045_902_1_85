@@ -1,8 +1,11 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.FacilityScore;
+import java.util.List;
 
 public interface FacilityScoreService {
 
-    FacilityScore getByPropertyId(Long propertyId);
+    FacilityScore addScore(Long propertyId, FacilityScore facilityScore);
+
+    List<FacilityScore> getScoreByProperty(Long propertyId);
 }
