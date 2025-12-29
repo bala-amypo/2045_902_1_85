@@ -11,6 +11,7 @@ public class FacilityScore {
     private Long id;
 
     @OneToOne
+    @JoinColumn(name = "property_id", unique = true)
     private Property property;
 
     private Integer schoolProximity;
@@ -30,11 +31,15 @@ public class FacilityScore {
         this.safetyScore = safetyScore;
     }
 
-    // ✅ REQUIRED GETTERS
+    // 🔥 REQUIRED SETTER
+    public void setProperty(Property property) {
+        this.property = property;
+    }
+
+    // getters
+    public Property getProperty() { return property; }
     public Integer getSchoolProximity() { return schoolProximity; }
     public Integer getHospitalProximity() { return hospitalProximity; }
     public Integer getTransportAccess() { return transportAccess; }
     public Integer getSafetyScore() { return safetyScore; }
-
-    public Property getProperty() { return property; }
 }
