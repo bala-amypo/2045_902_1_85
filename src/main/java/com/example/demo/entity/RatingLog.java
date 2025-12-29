@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class RatingLog {
