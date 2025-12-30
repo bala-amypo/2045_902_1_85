@@ -1,44 +1,36 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
 
-import com.example.demo.entity.FacilityScore;
-import com.example.demo.entity.Property;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.FacilityScoreRepository;
-import com.example.demo.repository.PropertyRepository;
-import com.example.demo.service.FacilityScoreService;
+import com.example.demo.entity.*;
+import com.example.demo.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FacilityScoreServiceImpl implements FacilityScoreService {
 
-    private final FacilityScoreRepository repo;
-    private final PropertyRepository propertyRepo;
+    @Autowired
+    private PropertyRepository propertyRepository;
 
-    public FacilityScoreServiceImpl(FacilityScoreRepository repo,
-                                    PropertyRepository propertyRepo) {
-        this.repo = repo;
-        this.propertyRepo = propertyRepo;
-    }
+    @Autowired
+    private FacilityScoreRepository facilityScoreRepository;
 
     @Override
     public FacilityScore addScore(Long propertyId, FacilityScore score) {
-        Property property = propertyRepo.findById(propertyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Property not found"));
 
-        repo.findByProperty(property).ifPresent(s -> {
-            throw new IllegalArgumentException("Facility score already exists");
-        });
+        Property property = propertyRepository.findById(propertyId).orElseThrow();
+
+        if (facilityScoreRepository.findByProperty(property).isPresent()) {
+            throw new RuntimeException("Score already exists");
+        }
 
         score.setProperty(property);
-        return repo.save(score);
+        return facilityScoreRepository.save(score);
     }
 
     @Override
     public FacilityScore getScoreByProperty(Long propertyId) {
-        Property property = propertyRepo.findById(propertyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Property not found"));
 
-        return repo.findByProperty(property)
-                .orElseThrow(() -> new ResourceNotFoundException("Facility score not found"));
+        Property property = propertyRepository.findById(propertyId).orElseThrow();
+        return facilityScoreRepository.findByProperty(property).orElse(null);
     }
 }

@@ -1,8 +1,8 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
 
 import com.example.demo.entity.Property;
 import com.example.demo.repository.PropertyRepository;
-import com.example.demo.service.PropertyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,11 +10,8 @@ import java.util.List;
 @Service
 public class PropertyServiceImpl implements PropertyService {
 
-    private final PropertyRepository propertyRepository;
-
-    public PropertyServiceImpl(PropertyRepository propertyRepository) {
-        this.propertyRepository = propertyRepository;
-    }
+    @Autowired
+    private PropertyRepository propertyRepository;
 
     @Override
     public Property addProperty(Property property) {
