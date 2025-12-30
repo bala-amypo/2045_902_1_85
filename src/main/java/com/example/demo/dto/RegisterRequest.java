@@ -1,13 +1,24 @@
 package com.example.demo.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class RegisterRequest {
 
+    @NotBlank
     private String name;
+
+    @Email
+    @NotBlank
     private String email;
+
+    @NotBlank
     private String password;
+
+    @NotBlank
     private String role;
 
-    public RegisterRequest() {}
+    // ===== GETTERS & SETTERS =====
 
     public String getName() {
         return name;
@@ -28,7 +39,7 @@ public class RegisterRequest {
     public String getPassword() {
         return password;
     }
-
+    
     public void setPassword(String password) {
         this.password = password;
     }
@@ -36,7 +47,7 @@ public class RegisterRequest {
     public String getRole() {
         return role;
     }
-
+    
     public void setRole(String role) {
         this.role = role;
     }
