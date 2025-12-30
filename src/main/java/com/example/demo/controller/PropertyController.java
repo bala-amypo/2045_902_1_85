@@ -3,6 +3,9 @@ package com.example.demo.controller;
 import com.example.demo.entity.Property;
 import com.example.demo.service.PropertyService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,13 +20,18 @@ public class PropertyController {
         this.propertyService = propertyService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public Property addProperty(@Valid @RequestBody Property property) {
-        return propertyService.addProperty(property);
+    public ResponseEntity<Property> addProperty(@Valid @RequestBody Property property) {
+        return new ResponseEntity<>(
+                propertyService.addProperty(property),
+                HttpStatus.CREATED
+        );
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','ANALYST')")
     @GetMapping
-    public List<Property> getAllProperties() {
-        return propertyService.getAllProperties();
+    public ResponseEntity<List<Property>> getAllProperties() {
+        return ResponseEntity.ok(propertyService.getAllProperties());
     }
 }

@@ -1,86 +1,72 @@
-package com.example.demo.controller;
+package com.example.demo.config;
 
-import com.example.demo.dto.AuthResponse;
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.RegisterRequest;
-import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.security.JwtTokenProvider;
-
-import org.springframework.web.bind.annotation.*;
+import com.example.demo.security.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@RestController
-@RequestMapping("/auth")
-public class AuthController {
+@Configuration
+@EnableMethodSecurity
+public class SecurityConfig {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public AuthController(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            JwtTokenProvider jwtTokenProvider) {
-
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    // ---------------- REGISTER ----------------
-    @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest registerRequest) {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        // check if email already exists
-        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
-        }
+        http
+            .csrf(csrf -> csrf.disable())
 
-        User user = new User();
-        user.setName(registerRequest.getName());
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(
-                passwordEncoder.encode(registerRequest.getPassword())
-        );
-        user.setRole(
-                registerRequest.getRole() == null
-                        ? "ANALYST"
-                        : registerRequest.getRole()
-        );
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(
+                    (request, response, authException) ->
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+                )
+                .accessDeniedHandler(
+                    (request, response, accessDeniedException) ->
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden")
+                )
+            )
 
-        userRepository.save(user);
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/auth/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/v3/api-docs/**"
+                ).permitAll()
+                .anyRequest().authenticated()
+            )
 
-        return "User registered successfully";
+            // 🔥 JWT FILTER (ABSOLUTELY REQUIRED)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
+            .httpBasic(httpBasic -> httpBasic.disable())
+            .formLogin(form -> form.disable());
+
+        return http.build();
     }
 
-    // ---------------- LOGIN ----------------
-    @PostMapping("/login")
-    public AuthResponse login(@RequestBody LoginRequest loginRequest) {
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-        // 🔴 THIS IS THE LINE YOU ASKED ABOUT
-        User user = userRepository
-                .findByEmail(loginRequest.getEmail())
-                .orElseThrow(() ->
-                        new RuntimeException("Invalid email or password"));
-
-        // check password
-        if (!passwordEncoder.matches(
-                loginRequest.getPassword(),
-                user.getPassword())) {
-
-            throw new RuntimeException("Invalid email or password");
-        }
-
-        String token = jwtTokenProvider.generateToken(
-                loginRequest.getEmail(),
-                user.getRole()
-        );
-
-        return new AuthResponse(
-                token,
-                user.getEmail(),
-                user.getRole()
-        );
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 }
