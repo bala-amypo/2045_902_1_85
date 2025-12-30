@@ -1,21 +1,11 @@
-package com.example.demo.dto;
+package com.example.demo;
 
-public class AuthResponse {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-    private String token;
-
-    public AuthResponse(String token) {
-        this.token = token;
-    }
-
-    public AuthResponse() {
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
+@SpringBootApplication
+public class DemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
     }
 }
