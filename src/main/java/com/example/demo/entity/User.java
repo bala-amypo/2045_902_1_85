@@ -5,10 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(
-        name = "users",
-        uniqueConstraints = @UniqueConstraint(columnNames = "email")
-)
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
 
     @Id
@@ -17,42 +14,25 @@ public class User {
 
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
     private String role;
 
     @ManyToMany
     @JoinTable(
-            name = "user_properties",
+            name = "user_property",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "property_id")
     )
     private Set<Property> assignedProperties = new HashSet<>();
 
-    // ---------- CONSTRUCTORS ----------
-
-    public User() {
-    }
-
-    public User(String name, String email, String password, String role) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
-    // ---------- GETTERS & SETTERS ----------
+    // ===== GETTERS & SETTERS =====
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -63,14 +43,18 @@ public class User {
         this.name = name;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getEmail() {
         return email;
     }
-
+ 
     public void setEmail(String email) {
         this.email = email;
     }
-
+ 
     public String getPassword() {
         return password;
     }
@@ -86,11 +70,11 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
-
+ 
     public Set<Property> getAssignedProperties() {
         return assignedProperties;
     }
-
+ 
     public void setAssignedProperties(Set<Property> assignedProperties) {
         this.assignedProperties = assignedProperties;
     }

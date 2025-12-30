@@ -11,7 +11,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     // Derived query
     List<Property> findByCity(String city);
 
-    // HQL query
-    @Query("SELECT p FROM Property p WHERE p.city = :city")
+    // HQL query (explicitly tested)
+    @Query("select p from Property p where p.city = :city")
     List<Property> findByCityHql(String city);
 }
