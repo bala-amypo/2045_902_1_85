@@ -1,65 +1,56 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "rating_logs")
 public class RatingLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String message;
+
+    @Column(name = "logged_at")
+    private LocalDateTime loggedAt;
+
     @ManyToOne
     @JoinColumn(name = "property_id")
+    @JsonBackReference
     private Property property;
 
-    private String rating;
-
-    private LocalDateTime createdAt;
-
-    // ✅ No-args constructor (required by JPA)
-    public RatingLog() {
+    @PrePersist
+    public void onCreate() {
+        this.loggedAt = LocalDateTime.now();
     }
 
-    // ✅ All-args constructor
-    public RatingLog(Property property, String rating, LocalDateTime createdAt) {
-        this.property = property;
-        this.rating = rating;
-        this.createdAt = createdAt;
-    }
+    // getters & setters
 
-    // ✅ Getters
     public Long getId() {
         return id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public LocalDateTime getLoggedAt() {
+        return loggedAt;
     }
 
     public Property getProperty() {
         return property;
     }
 
-    public String getRating() {
-        return rating;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    // ✅ Setters
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setProperty(Property property) {
         this.property = property;
-    }
-
-    public void setRating(String rating) {
-        this.rating = rating;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }

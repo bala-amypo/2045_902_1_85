@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.RatingLog;
 import com.example.demo.service.RatingLogService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,20 +12,20 @@ import java.util.List;
 @RequestMapping("/logs")
 public class RatingLogController {
 
-    private final RatingLogService ratingLogService;
-
-    public RatingLogController(RatingLogService ratingLogService) {
-        this.ratingLogService = ratingLogService;
-    }
+    @Autowired
+    private RatingLogService ratingLogService;
 
     @PostMapping("/{propertyId}")
-    public RatingLog addLog(@PathVariable Long propertyId,
-                            @RequestParam String message) {
-        return ratingLogService.addLog(propertyId, message);
+    public ResponseEntity<RatingLog> addLog(
+            @PathVariable Long propertyId,
+            @RequestParam String message) {
+
+        RatingLog log = ratingLogService.addLog(propertyId, message);
+        return new ResponseEntity<>(log, HttpStatus.CREATED);
     }
 
-    @GetMapping("/property/{propertyId}")
-    public List<RatingLog> getLogs(@PathVariable Long propertyId) {
-        return ratingLogService.getLogsByProperty(propertyId);
+    @GetMapping("/{propertyId}")
+    public ResponseEntity<List<RatingLog>> getLogs(@PathVariable Long propertyId) {
+        return ResponseEntity.ok(ratingLogService.getLogsByProperty(propertyId));
     }
 }

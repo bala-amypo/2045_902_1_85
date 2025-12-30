@@ -1,45 +1,31 @@
-package com.example.demo.entity;
+package com.example.demo.controller;
 
-import jakarta.persistence.*;
+import com.example.demo.entity.RatingLog;
+import com.example.demo.service.RatingLogService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 
-@Entity
-@Table(name = "facility_scores")
-public class FacilityScore {
+import java.util.List;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@RestController
+@RequestMapping("/logs")
+public class RatingLogController {
 
-    @OneToOne
-    @JoinColumn(name = "property_id", unique = true)
-    private Property property;
+    @Autowired
+    private RatingLogService ratingLogService;
 
-    private Integer schoolProximity;
-    private Integer hospitalProximity;
-    private Integer transportAccess;
-    private Integer safetyScore;
+    @PostMapping("/{propertyId}")
+    public ResponseEntity<RatingLog> addLog(
+            @PathVariable Long propertyId,
+            @RequestParam String message) {
 
-    public FacilityScore() {}
-
-    public FacilityScore(Property property, Integer schoolProximity,
-                         Integer hospitalProximity, Integer transportAccess,
-                         Integer safetyScore) {
-        this.property = property;
-        this.schoolProximity = schoolProximity;
-        this.hospitalProximity = hospitalProximity;
-        this.transportAccess = transportAccess;
-        this.safetyScore = safetyScore;
+        RatingLog log = ratingLogService.addLog(propertyId, message);
+        return new ResponseEntity<>(log, HttpStatus.CREATED);
     }
 
-    // 🔥 REQUIRED SETTER
-    public void setProperty(Property property) {
-        this.property = property;
+    @GetMapping("/{propertyId}")
+    public ResponseEntity<List<RatingLog>> getLogs(@PathVariable Long propertyId) {
+        return ResponseEntity.ok(ratingLogService.getLogsByProperty(propertyId));
     }
-
-    // getters
-    public Property getProperty() { return property; }
-    public Integer getSchoolProximity() { return schoolProximity; }
-    public Integer getHospitalProximity() { return hospitalProximity; }
-    public Integer getTransportAccess() { return transportAccess; }
-    public Integer getSafetyScore() { return safetyScore; }
 }
